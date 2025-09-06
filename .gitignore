@@ -1,0 +1,21 @@
+@"
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# venv
+.venv/
+env/
+venv/
+
+# DB / logs
+*.db
+*.sqlite3
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+"@ | Out-File -Encoding utf8 .gitignore
