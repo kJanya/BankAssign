@@ -9,6 +9,81 @@ A lightweight FastAPI application that evaluates student eligibility for college
 - **Concurrency**: FastAPI handles concurrent requests; SQLite connection is per-request (`check_same_thread=False`).
 - **Time Budget**: Computation is O(1) with tiny lookups; median latency << 1s in local tests.
 
+🚀 Deploying to Render (FastAPI + Uvicorn)
+
+This project is a FastAPI app served by Uvicorn. Below are the exact steps (and commands) used to deploy it on Render.
+
+1) Repo layout
+.
+├─ app/
+│  ├─ __init__.py
+│  ├─ main.py            # FastAPI app (routes: /docs, /health, /check_eligibility)
+│  ├─ db.py              # SQLite helpers (uses DB_PATH env var)
+│  ├─ eligibility.py     # Business rules
+│  ├─ schemas.py         # Pydantic models
+│  └─ logger.py
+├─ requirements.txt
+└─ (optional) runtime.txt   # pin Python version on Render (e.g., 3.12.6)
+
+
+Note: api/index.py is only needed for Vercel; Render does not need it.
+
+2) Dependencies
+
+Use a minimal, platform-friendly requirements.txt (avoid pip freeze):
+
+fastapi==0.115.0
+uvicorn==0.30.6
+pydantic==2.9.2
+numpy==2.1.3
+pandas==2.3.0
+
+
+If you’d rather match local Python 3.12, pin Pydantic v1 & NumPy 2.0.1, and add runtime.txt with 3.12.6.
+
+3) (Optional) Pin Python version on Render
+
+If you hit wheels/build issues on Python 3.13, pin to 3.12:
+
+runtime.txt
+└─ 3.12.6
+
+
+Commit and push.
+
+4) Create the service on Render
+
+Go to Render → New → Web Service.
+
+Connect your GitHub repo.
+
+Environment: Python (auto-detected).
+
+Build Command:
+
+pip install -r requirements.txt
+
+
+Start Command:
+
+uvicorn app.main:app --host 0.0.0.0 --port $PORT --workers ${WEB_CONCURRENCY:-2} --log-level info
+
+
+Click Create Web Service.
+
+Environment variables
+
+If you’re using SQLite (default in this project):
+
+DB_PATH → set to a writable path.
+
+Quick demo (ephemeral): /tmp/data.sqlite3
+
+Persistent (recommended): add a Render Disk and set
+DB_PATH=/var/data/data.sqlite3 (or the mount path you choose).
+
+To add: Settings → Environment → Add Environment Variable.
+
 ## Run locally
 ```bash
 python -m venv .venv && . .venv/bin/activate   # Windows: .venv\Scripts\activate
