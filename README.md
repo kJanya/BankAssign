@@ -79,9 +79,6 @@ DB_PATH → set to a writable path.
 
 Quick demo (ephemeral): /tmp/data.sqlite3
 
-Persistent (recommended): add a Render Disk and set
-DB_PATH=/var/data/data.sqlite3 (or the mount path you choose).
-
 To add: Settings → Environment → Add Environment Variable.
 
 ## Run locally
